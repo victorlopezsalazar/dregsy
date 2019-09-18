@@ -1,10 +1,10 @@
 package skopeo
 
 import (
-    "regexp"
 	"bytes"
 	"fmt"
 	"io"
+	"regexp"
 
 	"github.com/xelalexv/dregsy/internal/pkg/log"
 	"github.com/xelalexv/dregsy/internal/pkg/relays/docker"
