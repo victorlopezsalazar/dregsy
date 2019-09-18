@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"regexp"
 
 	"github.com/xelalexv/dregsy/internal/pkg/log"
 	"github.com/xelalexv/dregsy/internal/pkg/relays/docker"
@@ -114,6 +115,15 @@ func (r *SkopeoRelay) Sync(srcRef, srcAuth string, srcSkipTLSVerify bool,
 				append(cmd,
 					fmt.Sprintf("docker://%s:%s", srcRef, tag),
 					fmt.Sprintf("docker://%s:%s", destRef, tag))...))
+
+		matched, _ := regexp.MatchString("^\\d+$", tag)
+		if matched {
+		    errs = errs || log.Error(
+        		runSkopeo(r.wrOut, r.wrOut, verbose,
+        			append(cmd,
+        				fmt.Sprintf("docker://%s:%s", srcRef, tag),
+        				fmt.Sprintf("docker://%s:release-%s", destRef, tag))...))
+        }
 	}
 
 	if errs {
