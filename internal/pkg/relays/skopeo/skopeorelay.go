@@ -115,7 +115,9 @@ func (r *SkopeoRelay) Sync(srcRef, srcAuth string, srcSkipTLSVerify bool,
 				append(cmd,
 					fmt.Sprintf("docker://%s:%s", srcRef, tag),
 					fmt.Sprintf("docker://%s:%s", destRef, tag))...))
-		if MatchString("^\d+$", tag) {
+
+		matched, _ := regexp.MatchString("^\\d+$", tag)
+		if matched {
 		    errs = errs || log.Error(
         		runSkopeo(r.wrOut, r.wrOut, verbose,
         			append(cmd,
