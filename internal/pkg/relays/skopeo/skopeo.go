@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"net/http"
 
 	"github.com/xelalexv/dregsy/internal/pkg/log"
 )
@@ -34,46 +35,23 @@ type creds struct {
 
 //
 type manifest struct {
-	Name     string   `json:"Name"`
-	Digest   string   `json:"Digest"`
-	RepoTags []string `json:"RepoTags"`
+	Name     string   `json:"name"`
+	RepoTags []string `json:"tags"`
 }
 
 //
 func listAllTags(ref, creds, certDir string, skipTLSVerify bool) (
 	[]string, error) {
 
-	cmd := []string{
-		"inspect",
-	}
+	repoRef := strings.SplitN(ref, "/", 2)
+	resp, err := http.Get("http://" + repoRef[0] + "/v2/" + repoRef[1] + "/tags/list")
 
-	if skipTLSVerify {
-		cmd = append(cmd, "--tls-verify=false")
-	}
-
-	if creds != "" {
-		cmd = append(cmd, fmt.Sprintf("--creds=%s", creds))
-	}
-
-	if certDir != "" {
-		cmd = append(cmd, fmt.Sprintf("--cert-dir=%s", certDir))
-	}
-
-	cmd = append(cmd, "docker://"+ref)
-
-	bufOut := new(bytes.Buffer)
-	bufErr := new(bytes.Buffer)
-
-	if err := runSkopeo(bufOut, bufErr, true, cmd...); err != nil {
+	if err != nil  {
 		return nil,
-			fmt.Errorf("error listing image tags: %s, %v", bufErr.String(), err)
+			fmt.Errorf("error listing image tags: %v", err)
 	}
 
-	man, err := decodeManifest(bufOut.Bytes())
-	if err != nil {
-		return nil, err
-	}
-	return man.RepoTags, nil
+	return decodeManifest(resp).RepoTags, nil
 }
 
 //
@@ -112,12 +90,24 @@ func runSkopeo(outWr, errWr io.Writer, verbose bool, args ...string) error {
 }
 
 //
-func decodeManifest(m []byte) (*manifest, error) {
+func decodeManifest(resp *http.Response) *manifest {
 	var ret manifest
-	if err := json.Unmarshal(m, &ret); err != nil {
-		return nil, err
+
+	defer closeResponse(resp)
+	body, requestErr := ioutil.ReadAll(resp.Body)
+
+	if requestErr != nil ||  json.Unmarshal(body, &ret) != nil {
+		return nil
 	}
-	return &ret, nil
+	return &ret
+}
+
+func closeResponse(resp *http.Response) {
+	fmt.Println("closing")
+	err := resp.Body.Close()
+	if err != nil {
+		fmt.Errorf("error: %v\n", err)
+	}
 }
 
 //
