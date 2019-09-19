@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"strings"
 	"net/http"
+	"sort"
 
 	"github.com/xelalexv/dregsy/internal/pkg/log"
 )
@@ -51,7 +52,11 @@ func listAllTags(ref, creds, certDir string, skipTLSVerify bool) (
 			fmt.Errorf("error listing image tags: %v", err)
 	}
 
-	return decodeManifest(resp).RepoTags, nil
+	tags := decodeManifest(resp).RepoTags
+
+	sort.Strings(tags)
+
+	return tags, nil
 }
 
 //
