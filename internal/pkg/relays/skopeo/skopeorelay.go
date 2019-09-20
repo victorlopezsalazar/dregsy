@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"sort"
 
 	"github.com/xelalexv/dregsy/internal/pkg/log"
 	"github.com/xelalexv/dregsy/internal/pkg/relays/docker"
-	"github.com/xelalexv/dregsy/internal/pkg/tagsort"
+	"github.com/xelalexv/dregsy/internal/pkg/tagsupport"
 )
 
 const RelayID = "skopeo"
@@ -107,7 +108,10 @@ func (r *SkopeoRelay) Sync(srcRef, srcAuth string, srcSkipTLSVerify bool,
 		}
 	}
 
-	tagsort.Sort(tags)
+	tags = tagsupport.FilterReleaseTags(tags)
+	tagsupport.Sort(tags)
+	numberOfTags := tagsupport.NumberOfTags(tag)
+	tags = tags[len(tags)-numberOfTags:numberOfTags]
 
 	errs := false
 	for _, tag := range tags {

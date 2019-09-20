@@ -1,4 +1,4 @@
-package tagsort
+package tagsupport
 
 import "sort"
 
