@@ -7,7 +7,7 @@ type TagSlice []string
 func (p TagSlice) Len() int           { return len(p) }
 func (p TagSlice) Less(i, j int) bool {
 	relativeSize := len(p[i]) - len(p[j])
-	if relativeSize == 0{
+	if relativeSize == 0 {
 		return p[i] < p[j]
 	}
 	return relativeSize < 0
