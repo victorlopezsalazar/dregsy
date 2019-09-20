@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"regexp"
-	"sort"
 
 	"github.com/xelalexv/dregsy/internal/pkg/log"
 	"github.com/xelalexv/dregsy/internal/pkg/relays/docker"
@@ -110,7 +109,7 @@ func (r *SkopeoRelay) Sync(srcRef, srcAuth string, srcSkipTLSVerify bool,
 
 	tags = tagsupport.FilterReleaseTags(tags)
 	tagsupport.Sort(tags)
-	numberOfTags := tagsupport.NumberOfTags(tag)
+	numberOfTags := tagsupport.NumberOfTags(tags)
 	tags = tags[len(tags)-numberOfTags:numberOfTags]
 
 	errs := false
