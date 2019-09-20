@@ -6,9 +6,9 @@ import (
 	"io"
 	"regexp"
 
-	"github.com/xelalexv/dregsy/internal/pkg/tagsort"
 	"github.com/xelalexv/dregsy/internal/pkg/log"
 	"github.com/xelalexv/dregsy/internal/pkg/relays/docker"
+	"github.com/xelalexv/dregsy/internal/pkg/tagsort"
 )
 
 const RelayID = "skopeo"
