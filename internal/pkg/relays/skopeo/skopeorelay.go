@@ -110,7 +110,7 @@ func (r *SkopeoRelay) Sync(srcRef, srcAuth string, srcSkipTLSVerify bool,
 	tags = tagsupport.FilterReleaseTags(tags)
 	tagsupport.Sort(tags)
 	numberOfTags := tagsupport.NumberOfTags(tags)
-	tags = tags[len(tags)-numberOfTags:numberOfTags]
+	tags = tags[len(tags)-numberOfTags:]
 
 	errs := false
 	for _, tag := range tags {
