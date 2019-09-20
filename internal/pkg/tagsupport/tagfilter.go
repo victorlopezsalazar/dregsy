@@ -1,9 +1,7 @@
 package tagsupport
 
-import (
-	"regexp"
-	"sort"
-)
+import "regexp"
+
 
 func filter(ss []string, test func(string) bool) (ret []string) {
 	for _, s := range ss {
