@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"sort"
 
 	"github.com/xelalexv/dregsy/internal/pkg/log"
 	"github.com/xelalexv/dregsy/internal/pkg/relays/docker"
@@ -105,6 +106,8 @@ func (r *SkopeoRelay) Sync(srcRef, srcAuth string, srcSkipTLSVerify bool,
 			return err
 		}
 	}
+
+	sort.Strings(tags)
 
 	errs := false
 	for _, tag := range tags {
